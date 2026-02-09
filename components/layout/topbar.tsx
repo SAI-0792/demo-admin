@@ -34,7 +34,7 @@ export function Topbar() {
     /* Modern topbar with glass effect and gradient */
     <div className="h-16 border-b border-border/30 bg-card/50 backdrop-blur-xl flex items-center justify-between px-4 lg:px-8 lg:ml-72 shadow-lg shadow-black/20">
       {/* Left side - Outlet Selector */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
         <div className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary/40 border border-border/30">
           <Building2 className="w-4 h-4 text-muted-foreground" />
           <Select value={user.currentOutletId || ""} onValueChange={setCurrentOutlet}>

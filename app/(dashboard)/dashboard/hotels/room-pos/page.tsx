@@ -44,6 +44,7 @@ import {
     Shirt,
     CalendarDays,
     Wrench,
+    Menu,
 } from "lucide-react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
@@ -58,6 +59,7 @@ export default function RoomPosPage() {
     const [selectedCategory, setSelectedCategory] = useState<string>("all")
     const [capacityFilter, setCapacityFilter] = useState<string>("all")
     const [priceSort, setPriceSort] = useState<"asc" | "desc" | null>(null)
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
 
     // Sheet States
     const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null)
@@ -237,65 +239,99 @@ export default function RoomPosPage() {
     return (
         <div className="flex h-[calc(100vh-4rem)]">
             {/* Sidebar - Room Categories */}
-            <aside className="w-72 border-r border-border/30 bg-gradient-to-b from-sidebar to-sidebar/80 backdrop-blur-sm p-6 hidden md:block">
-                <div className="mb-8">
-                    <h2 className="text-xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent mb-2">Room Types</h2>
-                    <p className="text-xs text-muted-foreground">Filter by category</p>
-                </div>
-                <div className="space-y-2">
-                    <Button
-                        variant={selectedCategory === "all" ? "default" : "ghost"}
-                        className={`w-full justify-start transition-all duration-300 ${selectedCategory === "all" ? "bg-primary/90 shadow-lg shadow-primary/20" : "hover:bg-accent/50"}`}
-                        onClick={() => setSelectedCategory("all")}
-                    >
-                        <BedDouble className="w-4 h-4 mr-2" />
-                        All Types
-                        <Badge variant="secondary" className="ml-auto text-xs">{rooms.length}</Badge>
-                    </Button>
-                    {categories.map((cat) => {
-                        const count = rooms.filter(r => r.categoryId === cat.id).length;
-                        return (
-                            <Button
-                                key={cat.id}
-                                variant={selectedCategory === cat.id ? "default" : "ghost"}
-                                className={`w-full justify-start transition-all duration-300 ${selectedCategory === cat.id ? "bg-primary/90 shadow-lg shadow-primary/20" : "hover:bg-accent/50"}`}
-                                onClick={() => setSelectedCategory(cat.id)}
-                            >
-                                <BedDouble className="w-4 h-4 mr-2" />
-                                {cat.name}
-                                <Badge variant="secondary" className="ml-auto text-xs">{count}</Badge>
-                            </Button>
-                        );
-                    })}
-                </div>
-
-                {/* Quick Stats */}
-                <div className="mt-8 pt-6 border-t border-border/30">
-                    <h3 className="text-sm font-semibold text-muted-foreground mb-4">Today's Overview</h3>
-                    <div className="space-y-3">
-                        <div className="flex items-center justify-between p-3 rounded-lg bg-gradient-to-r from-green-500/10 to-green-500/5 border border-green-500/20">
-                            <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                                <span className="text-sm">Available</span>
+            <aside className={`${isSidebarCollapsed ? 'w-16' : 'w-72'} border-r border-border/30 bg-gradient-to-b from-sidebar to-sidebar/80 backdrop-blur-sm hidden md:flex flex-col transition-all duration-300`}>
+                {/* Header with Hamburger Menu */}
+                <div className="p-4 border-b border-border/30">
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+                            className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary/10 hover:bg-primary/20 text-primary transition-colors"
+                        >
+                            <Menu className="size-5" />
+                        </button>
+                        {!isSidebarCollapsed && (
+                            <div className="grid flex-1 text-left text-sm leading-tight">
+                                <span className="truncate font-bold text-lg bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">Room Types</span>
+                                <span className="truncate text-xs text-muted-foreground">Filter by category</span>
                             </div>
-                            <span className="font-bold text-green-600">{rooms.filter(r => r.status === "available").length}</span>
-                        </div>
-                        <div className="flex items-center justify-between p-3 rounded-lg bg-gradient-to-r from-red-500/10 to-red-500/5 border border-red-500/20">
-                            <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full bg-red-500" />
-                                <span className="text-sm">Occupied</span>
-                            </div>
-                            <span className="font-bold text-red-600">{rooms.filter(r => r.status === "occupied").length}</span>
-                        </div>
-                        <div className="flex items-center justify-between p-3 rounded-lg bg-gradient-to-r from-yellow-500/10 to-yellow-500/5 border border-yellow-500/20">
-                            <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full bg-yellow-500" />
-                                <span className="text-sm">Maintenance</span>
-                            </div>
-                            <span className="font-bold text-yellow-600">{rooms.filter(r => r.status === "maintenance").length}</span>
-                        </div>
+                        )}
                     </div>
                 </div>
+
+                {/* Content */}
+                <div className={`flex-1 overflow-y-auto p-4 ${isSidebarCollapsed ? 'px-2' : ''}`}>
+                    <div className="space-y-2">
+                        <Button
+                            variant={selectedCategory === "all" ? "default" : "ghost"}
+                            className={`w-full justify-start transition-all duration-300 ${selectedCategory === "all" ? "bg-primary/90 shadow-lg shadow-primary/20" : "hover:bg-accent/50"}`}
+                            onClick={() => setSelectedCategory("all")}
+                        >
+                            <BedDouble className="w-4 h-4 mr-2" />
+                            {!isSidebarCollapsed && "All Types"}
+                            {!isSidebarCollapsed && <Badge variant="secondary" className="ml-auto text-xs">{rooms.length}</Badge>}
+                        </Button>
+                        {categories.map((cat) => {
+                            const count = rooms.filter(r => r.categoryId === cat.id).length;
+                            return (
+                                <Button
+                                    key={cat.id}
+                                    variant={selectedCategory === cat.id ? "default" : "ghost"}
+                                    className={`w-full justify-start transition-all duration-300 ${selectedCategory === cat.id ? "bg-primary/90 shadow-lg shadow-primary/20" : "hover:bg-accent/50"}`}
+                                    onClick={() => setSelectedCategory(cat.id)}
+                                >
+                                    <BedDouble className="w-4 h-4 mr-2" />
+                                    {!isSidebarCollapsed && cat.name}
+                                    {!isSidebarCollapsed && <Badge variant="secondary" className="ml-auto text-xs">{count}</Badge>}
+                                </Button>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                {/* Quick Stats - only show when expanded */}
+                {!isSidebarCollapsed && (
+                    <div className="p-4 border-t border-border/30">
+                        <h3 className="text-sm font-semibold text-muted-foreground mb-4">Today's Overview</h3>
+                        <div className="space-y-3">
+                            <div className="flex items-center justify-between p-3 rounded-lg bg-gradient-to-r from-green-500/10 to-green-500/5 border border-green-500/20">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                                    <span className="text-sm">Available</span>
+                                </div>
+                                <span className="font-bold text-green-600">{rooms.filter(r => r.status === "available").length}</span>
+                            </div>
+                            <div className="flex items-center justify-between p-3 rounded-lg bg-gradient-to-r from-red-500/10 to-red-500/5 border border-red-500/20">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-2 h-2 rounded-full bg-red-500" />
+                                    <span className="text-sm">Occupied</span>
+                                </div>
+                                <span className="font-bold text-red-600">{rooms.filter(r => r.status === "occupied").length}</span>
+                            </div>
+                            <div className="flex items-center justify-between p-3 rounded-lg bg-gradient-to-r from-yellow-500/10 to-yellow-500/5 border border-yellow-500/20">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-2 h-2 rounded-full bg-yellow-500" />
+                                    <span className="text-sm">Maintenance</span>
+                                </div>
+                                <span className="font-bold text-yellow-600">{rooms.filter(r => r.status === "maintenance").length}</span>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Collapsed State Icons */}
+                {isSidebarCollapsed && (
+                    <div className="flex flex-col items-center gap-4 p-4 mt-4">
+                        <div className="p-2 rounded-lg bg-green-500/10 border border-green-500/20" title={`${rooms.filter(r => r.status === "available").length} Available`}>
+                            <CheckCircle2 className="w-5 h-5 text-green-500" />
+                        </div>
+                        <div className="p-2 rounded-lg bg-red-500/10 border border-red-500/20" title={`${rooms.filter(r => r.status === "occupied").length} Occupied`}>
+                            <Users className="w-5 h-5 text-red-500" />
+                        </div>
+                        <div className="p-2 rounded-lg bg-yellow-500/10 border border-yellow-500/20" title={`${rooms.filter(r => r.status === "maintenance").length} Maintenance`}>
+                            <Wrench className="w-5 h-5 text-yellow-500" />
+                        </div>
+                    </div>
+                )}
             </aside>
 
             {/* Main Content */}
@@ -335,13 +371,13 @@ export default function RoomPosPage() {
                             </Select>
                         </div>
                     </div>
-                </header>
+                </header >
 
                 {/* Room Grid */}
-                <ScrollArea className="flex-1 p-6 bg-gradient-to-br from-background to-muted/20">
+                < div className="flex-1 overflow-y-auto p-6 bg-gradient-to-br from-background to-muted/20" >
 
                     {/* Available Section */}
-                    <div className="mb-10">
+                    < div className="mb-10" >
                         <div className="flex items-center gap-3 mb-6">
                             <div className="p-2 rounded-lg bg-gradient-to-br from-green-500/20 to-green-500/5">
                                 <CheckCircle2 className="w-5 h-5 text-green-500" />
@@ -390,7 +426,7 @@ export default function RoomPosPage() {
                                 </Card>
                             ))}
                         </div>
-                    </div>
+                    </div >
 
                     <Separator className="my-8 bg-border/30" />
 
@@ -480,11 +516,11 @@ export default function RoomPosPage() {
                         </div>
                     </div>
 
-                </ScrollArea>
-            </div>
+                </div >
+            </div >
 
             {/* Booking Sheet */}
-            <Sheet open={isBookingSheetOpen} onOpenChange={setIsBookingSheetOpen}>
+            < Sheet open={isBookingSheetOpen} onOpenChange={setIsBookingSheetOpen} >
                 <SheetContent className="sm:max-w-md overflow-y-auto">
                     <SheetHeader>
                         <SheetTitle>New Check-In</SheetTitle>
@@ -636,10 +672,10 @@ export default function RoomPosPage() {
                         <Button onClick={handleCreateBooking}>Confirm Check-In</Button>
                     </SheetFooter>
                 </SheetContent>
-            </Sheet>
+            </Sheet >
 
             {/* POS & Management Sheet */}
-            <Sheet open={isPosSheetOpen} onOpenChange={setIsPosSheetOpen}>
+            < Sheet open={isPosSheetOpen} onOpenChange={setIsPosSheetOpen} >
                 <SheetContent className="sm:max-w-lg overflow-y-auto">
                     {selectedRoomId && (
                         <>
@@ -767,10 +803,10 @@ export default function RoomPosPage() {
                         </>
                     )}
                 </SheetContent>
-            </Sheet>
+            </Sheet >
 
             {/* Maintenance Sheet */}
-            <Sheet open={isMaintenanceSheetOpen} onOpenChange={setIsMaintenanceSheetOpen}>
+            < Sheet open={isMaintenanceSheetOpen} onOpenChange={setIsMaintenanceSheetOpen} >
                 <SheetContent className="sm:max-w-md">
                     <SheetHeader>
                         <SheetTitle>Maintenance Control</SheetTitle>
@@ -821,10 +857,10 @@ export default function RoomPosPage() {
                         </div>
                     </div>
                 </SheetContent>
-            </Sheet>
+            </Sheet >
 
             {/* Checkout Confirmation Dialog */}
-            <Dialog open={isCheckoutDialogOpen} onOpenChange={setIsCheckoutDialogOpen}>
+            < Dialog open={isCheckoutDialogOpen} onOpenChange={setIsCheckoutDialogOpen} >
                 <DialogContent className="sm:max-w-md">
                     <DialogHeader>
                         <DialogTitle>Confirm Checkout</DialogTitle>
@@ -874,8 +910,8 @@ export default function RoomPosPage() {
                         </Button>
                     </DialogFooter>
                 </DialogContent>
-            </Dialog>
+            </Dialog >
 
-        </div>
+        </div >
     )
 }

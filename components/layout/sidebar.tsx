@@ -3,7 +3,7 @@
 import * as React from "react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
-import { Building2, UtensilsCrossed, Car, Settings, ChevronDown, Sparkles } from "lucide-react"
+import { Building2, UtensilsCrossed, Car, Settings, ChevronDown, Sparkles, Menu } from "lucide-react"
 import { useAuthStore } from "@/core/lib/store"
 import { cn } from "@/core/lib/utils"
 import {
@@ -18,6 +18,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   SidebarRail,
+  useSidebar,
 } from "@/components/ui/sidebar"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 
@@ -68,6 +69,7 @@ const MENU_ITEMS: MenuItem[] = [
 export function Sidebar({ ...props }: React.ComponentProps<typeof ShadcnSidebar>) {
   const pathname = usePathname()
   const user = useAuthStore((state) => state.user)
+  const { toggleSidebar } = useSidebar()
 
   if (!user) return null
 
@@ -82,10 +84,14 @@ export function Sidebar({ ...props }: React.ComponentProps<typeof ShadcnSidebar>
     <ShadcnSidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <div className="flex items-center gap-2 px-2 py-2">
-          <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <Sparkles className="size-4" />
-          </div>
-          <div className="grid flex-1 text-left text-sm leading-tight">
+          {/* Hamburger Menu Toggle */}
+          <button
+            onClick={toggleSidebar}
+            className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary/10 hover:bg-primary/20 text-primary transition-colors"
+          >
+            <Menu className="size-5" />
+          </button>
+          <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
             <span className="truncate font-semibold">Vendor Hub</span>
             <span className="truncate text-xs">Dashboard</span>
           </div>

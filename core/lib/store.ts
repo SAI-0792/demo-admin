@@ -598,105 +598,112 @@ const MOCK_TRAVEL_DATA: TravelData = {
 // Re-export AuthStore from new location
 export { useAuthStore } from "@/core/store/use-auth-store"
 
-export const useHotelStore = create<HotelStore>((set) => ({
-  hotelData: MOCK_HOTEL_DATA,
+export const useHotelStore = create<HotelStore>()(
+  persist(
+    (set) => ({
+      hotelData: MOCK_HOTEL_DATA,
 
-  addCategory: (category) =>
-    set((state) => ({
-      hotelData: {
-        ...state.hotelData,
-        categories: [...state.hotelData.categories, category],
-      },
-    })),
+      addCategory: (category) =>
+        set((state) => ({
+          hotelData: {
+            ...state.hotelData,
+            categories: [...state.hotelData.categories, category],
+          },
+        })),
 
-  updateCategory: (id, updates) =>
-    set((state) => ({
-      hotelData: {
-        ...state.hotelData,
-        categories: state.hotelData.categories.map((cat) => (cat.id === id ? { ...cat, ...updates } : cat)),
-      },
-    })),
+      updateCategory: (id, updates) =>
+        set((state) => ({
+          hotelData: {
+            ...state.hotelData,
+            categories: state.hotelData.categories.map((cat) => (cat.id === id ? { ...cat, ...updates } : cat)),
+          },
+        })),
 
-  deleteCategory: (id) =>
-    set((state) => ({
-      hotelData: {
-        ...state.hotelData,
-        categories: state.hotelData.categories.filter((cat) => cat.id !== id),
-      },
-    })),
+      deleteCategory: (id) =>
+        set((state) => ({
+          hotelData: {
+            ...state.hotelData,
+            categories: state.hotelData.categories.filter((cat) => cat.id !== id),
+          },
+        })),
 
-  addAmenity: (amenity) =>
-    set((state) => ({
-      hotelData: {
-        ...state.hotelData,
-        amenities: [...state.hotelData.amenities, amenity],
-      },
-    })),
+      addAmenity: (amenity) =>
+        set((state) => ({
+          hotelData: {
+            ...state.hotelData,
+            amenities: [...state.hotelData.amenities, amenity],
+          },
+        })),
 
-  updateAmenity: (id, updates) =>
-    set((state) => ({
-      hotelData: {
-        ...state.hotelData,
-        amenities: state.hotelData.amenities.map((am) => (am.id === id ? { ...am, ...updates } : am)),
-      },
-    })),
+      updateAmenity: (id, updates) =>
+        set((state) => ({
+          hotelData: {
+            ...state.hotelData,
+            amenities: state.hotelData.amenities.map((am) => (am.id === id ? { ...am, ...updates } : am)),
+          },
+        })),
 
-  deleteAmenity: (id) =>
-    set((state) => ({
-      hotelData: {
-        ...state.hotelData,
-        amenities: state.hotelData.amenities.filter((am) => am.id !== id),
-      },
-    })),
+      deleteAmenity: (id) =>
+        set((state) => ({
+          hotelData: {
+            ...state.hotelData,
+            amenities: state.hotelData.amenities.filter((am) => am.id !== id),
+          },
+        })),
 
-  addRoom: (room) =>
-    set((state) => ({
-      hotelData: {
-        ...state.hotelData,
-        rooms: [...state.hotelData.rooms, room],
-      },
-    })),
+      addRoom: (room) =>
+        set((state) => ({
+          hotelData: {
+            ...state.hotelData,
+            rooms: [...state.hotelData.rooms, room],
+          },
+        })),
 
-  updateRoom: (id, updates) =>
-    set((state) => ({
-      hotelData: {
-        ...state.hotelData,
-        rooms: state.hotelData.rooms.map((room) => (room.id === id ? { ...room, ...updates } : room)),
-      },
-    })),
+      updateRoom: (id, updates) =>
+        set((state) => ({
+          hotelData: {
+            ...state.hotelData,
+            rooms: state.hotelData.rooms.map((room) => (room.id === id ? { ...room, ...updates } : room)),
+          },
+        })),
 
-  deleteRoom: (id) =>
-    set((state) => ({
-      hotelData: {
-        ...state.hotelData,
-        rooms: state.hotelData.rooms.filter((room) => room.id !== id),
-      },
-    })),
+      deleteRoom: (id) =>
+        set((state) => ({
+          hotelData: {
+            ...state.hotelData,
+            rooms: state.hotelData.rooms.filter((room) => room.id !== id),
+          },
+        })),
 
-  addBooking: (booking) =>
-    set((state) => ({
-      hotelData: {
-        ...state.hotelData,
-        bookings: [...state.hotelData.bookings, booking],
-      },
-    })),
+      addBooking: (booking) =>
+        set((state) => ({
+          hotelData: {
+            ...state.hotelData,
+            bookings: [...state.hotelData.bookings, booking],
+          },
+        })),
 
-  updateBooking: (id, updates) =>
-    set((state) => ({
-      hotelData: {
-        ...state.hotelData,
-        bookings: state.hotelData.bookings.map((booking) => (booking.id === id ? { ...booking, ...updates } : booking)),
-      },
-    })),
+      updateBooking: (id, updates) =>
+        set((state) => ({
+          hotelData: {
+            ...state.hotelData,
+            bookings: state.hotelData.bookings.map((booking) => (booking.id === id ? { ...booking, ...updates } : booking)),
+          },
+        })),
 
-  deleteBooking: (id) =>
-    set((state) => ({
-      hotelData: {
-        ...state.hotelData,
-        bookings: state.hotelData.bookings.filter((booking) => booking.id !== id),
-      },
-    })),
-}))
+      deleteBooking: (id) =>
+        set((state) => ({
+          hotelData: {
+            ...state.hotelData,
+            bookings: state.hotelData.bookings.filter((booking) => booking.id !== id),
+          },
+        })),
+    }),
+    {
+      name: 'hotel-storage', // unique name for localStorage key
+    }
+  )
+)
 
 export const useRestaurantStore = create<RestaurantStore>((set) => ({
   restaurantData: MOCK_RESTAURANT_DATA,
